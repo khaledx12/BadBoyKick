@@ -1,9 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BadBoy Kick</title>
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/attiakhaled663-cloud/BadBoy-KickRoro/refs/heads/main/RedKick_files/ab46995c-be54-4f0c-97d9-dc9965e3150b.png">
+<html lang="ar" dir="rtl"><head><meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script>
     (function(){
@@ -42,6 +38,56 @@
         else boot();
     })();
     </script>
+<script>
+/* حوارات داخل الصفحة بدل confirm()/prompt() — لأن WebView في كثير من محوّلات التطبيقات لا يدعمها */
+(function () {
+    function build(msg, opts) {
+        return new Promise(function (resolve) {
+            var ov = document.createElement('div');
+            ov.setAttribute('style', 'position:fixed;inset:0;z-index:2147483000;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:18px;direction:rtl;font-family:Tajawal,sans-serif');
+            var bx = document.createElement('div');
+            bx.setAttribute('style', 'width:100%;max-width:340px;background:#0b120a;border:1px solid rgba(83,252,24,.45);border-radius:16px;padding:18px;color:#e8ffe0;box-shadow:0 10px 40px rgba(0,0,0,.6)');
+            var tx = document.createElement('div');
+            tx.setAttribute('style', 'font-size:13px;line-height:1.8;white-space:pre-line;margin-bottom:14px;text-align:right');
+            tx.textContent = msg;
+            bx.appendChild(tx);
+            var inp = null;
+            if (opts.prompt) {
+                inp = document.createElement('input');
+                inp.type = opts.password ? 'password' : 'text';
+                inp.setAttribute('autocomplete', 'off');
+                inp.setAttribute('style', 'width:100%;box-sizing:border-box;padding:11px;border-radius:10px;border:1px solid rgba(83,252,24,.4);background:#050804;color:#e8ffe0;font-size:14px;margin-bottom:14px;direction:ltr;outline:none');
+                bx.appendChild(inp);
+            }
+            var row = document.createElement('div');
+            row.setAttribute('style', 'display:flex;gap:8px');
+            function btn(label, primary) {
+                var b = document.createElement('button');
+                b.type = 'button';
+                b.textContent = label;
+                b.setAttribute('style', 'flex:1;padding:11px;border-radius:10px;font-weight:800;font-size:13px;font-family:inherit;cursor:pointer;' +
+                    (primary ? 'background:#53fc18;color:#000;border:0' : 'background:transparent;color:#e8ffe0;border:1px solid rgba(83,252,24,.4)'));
+                return b;
+            }
+            var ok = btn(opts.okText || 'تأكيد', true), no = btn('إلغاء', false);
+            row.appendChild(ok); row.appendChild(no); bx.appendChild(row); ov.appendChild(bx);
+            function done(v) { document.removeEventListener('keydown', onKey, true); if (ov.parentNode) ov.parentNode.removeChild(ov); resolve(v); }
+            function onKey(e) {
+                if (e.key === 'Escape') { e.stopPropagation(); done(opts.prompt ? null : false); }
+                else if (e.key === 'Enter' && opts.prompt) { e.preventDefault(); done(inp.value); }
+            }
+            ok.onclick = function () { done(opts.prompt ? inp.value : true); };
+            no.onclick = function () { done(opts.prompt ? null : false); };
+            ov.onclick = function (e) { if (e.target === ov) done(opts.prompt ? null : false); };
+            document.addEventListener('keydown', onKey, true);
+            document.body.appendChild(ov);
+            try { (inp || ok).focus(); } catch (e) {}
+        });
+    }
+    window.__uiConfirm = function (msg) { return build(msg, { prompt: false }); };
+    window.__uiPrompt  = function (msg, o) { o = o || {}; return build(msg, { prompt: true, password: !!o.password, okText: 'دخول' }); };
+})();
+</script>
     <script src="https://raw.githubusercontent.com/attiakhaled663-cloud/BadBoy-KickRoro/refs/heads/main/api.js"></script>
     <style>
         :root {
@@ -52,18 +98,9 @@
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
-            background:var(--bg); color:var(--fg); font-family:'Tajawal',sans-serif;
+            color:var(--fg); font-family:'Tajawal',sans-serif;
             min-height:100vh; overflow-x:hidden;
         }
-        #fireCanvas { position:fixed; inset:0; z-index:0; pointer-events:none; }
-        .bg-vignette { position:fixed; inset:0; background:radial-gradient(ellipse at center,transparent 30%,rgba(5,2,10,0.7) 70%,rgba(5,2,10,0.95) 100%); pointer-events:none; z-index:1; }
-        .bg-glow { position:fixed; pointer-events:none; z-index:0; border-radius:50%; filter:blur(120px); }
-        .bg-glow.g1 { width:500px;height:500px;top:-150px;left:-100px;background:rgba(83,252,24,.08);animation:gd1 14s ease-in-out infinite; }
-        .bg-glow.g2 { width:400px;height:400px;bottom:-100px;right:-80px;background:rgba(255,255,255,0.05);animation:gd2 18s ease-in-out infinite; }
-        .bg-glow.g3 { width:300px;height:300px;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(83,252,24,.05);animation:gd3 10s ease-in-out infinite; }
-        @keyframes gd1{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,20px)}}
-        @keyframes gd2{0%,100%{transform:translate(0,0)}50%{transform:translate(-20px,-30px)}}
-        @keyframes gd3{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.15)}}
 
         .splash {
             position:fixed; inset:0; z-index:9999;
@@ -690,18 +727,6 @@
     --accent:#53fc18; --accent2:#9dff6b; --accent3:#b8ff4d;
     --card:rgba(22,10,30,.96); --border:rgba(83,252,24,.38);
 }
-body {
-    background:
-      radial-gradient(circle at 15% 15%,rgba(83,252,24,.16),transparent 22%),
-      radial-gradient(circle at 85% 25%,rgba(31,143,13,.15),transparent 24%),
-      radial-gradient(circle at 50% 100%,rgba(184,255,77,.07),transparent 28%),var(--bg);
-}
-.bg-vignette {
-    background:radial-gradient(ellipse at center,transparent 25%,rgba(7,3,12,.58) 68%,rgba(4,2,8,.94) 100%);
-}
-.bg-glow.g1{background:rgba(83,252,24,.12)}
-.bg-glow.g2{background:rgba(31,143,13,.10)}
-.bg-glow.g3{background:rgba(184,255,77,.07)}
 .splash {
     background:radial-gradient(circle at 50% 42%,rgba(83,252,24,.18),transparent 24%),
                radial-gradient(circle at 50% 65%,rgba(31,143,13,.16),transparent 32%),#070a06;
@@ -749,23 +774,6 @@ body {
 .modal-x{background:rgba(83,252,24,.08);border-color:rgba(83,252,24,.55)}
 .info-fab{background:linear-gradient(135deg,#53fc18,#9dff6b)}
 
-.halloween-decor{position:fixed;inset:0;z-index:3;pointer-events:none;overflow:hidden}
-.halloween-decor span{position:absolute;user-select:none;filter:drop-shadow(0 5px 10px rgba(0,0,0,.35))}
-.halloween-decor .ghost{font-size:42px}
-.halloween-decor .pumpkin{font-size:38px}
-.halloween-decor .bat{font-size:32px}
-.halloween-decor .star{font-size:20px;opacity:1}
-.halloween-decor .d1{top:10%;left:4%}.halloween-decor .d2{top:20%;right:4%;animation-delay:.8s}
-.halloween-decor .d3{bottom:18%;left:3%;animation-delay:1.4s}.halloween-decor .d4{bottom:12%;right:5%;animation-delay:2s}
-.halloween-decor .d5{top:7%;left:27%;animation-delay:.5s}.halloween-decor .d6{top:14%;right:28%;animation-delay:1.2s}
-.halloween-decor .d7{bottom:28%;left:13%;animation-delay:1.8s}.halloween-decor .d8{bottom:calc(25% - 1cm);right:12%;animation-delay:2.5s}
-@keyframes halloweenFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(4deg)}}
-@keyframes halloweenBat{0%,100%{transform:translate(0,0) rotate(-5deg)}50%{transform:translate(18px,-10px) rotate(5deg)}}
-@keyframes halloweenTwinkle{0%,100%{opacity:.35;transform:scale(.8) rotate(0)}50%{opacity:1;transform:scale(1.15) rotate(18deg)}}
-@media(max-width:560px){
-    .halloween-decor .ghost{font-size:31px}.halloween-decor .pumpkin{font-size:29px}
-    .halloween-decor .bat{font-size:25px}.halloween-decor .star{font-size:16px}
-}
 
     
 .kick-official-wrap{direction:rtl}
@@ -793,21 +801,7 @@ body {
 </head>
 <body>
 
-<div class="halloween-decor" aria-hidden="true">
-    <span class="ghost d1">‌</span><span class="pumpkin d2">‌</span>
-    <span class="bat d3">‌</span><span class="ghost d4">‌</span>
-    <span class="star d5">‌</span><span class="bat d6">‌‌</span>
-    <span class="pumpkin d7">‌</span><span class="star d8">
 
-صلِّ على ﷴ ﷺ</span>
-</div>
-
-
-<canvas id="fireCanvas" width="1024" height="568"></canvas>
-<div class="bg-glow g1"></div>
-<div class="bg-glow g2"></div>
-<div class="bg-glow g3"></div>
-<div class="bg-vignette"></div>
 <div class="toast-box" id="toasts"></div>
 <div class="net-status" id="netStatus"><i class="fas fa-wifi"></i> <span id="netStatusText">--</span></div>
 
@@ -2728,7 +2722,7 @@ function handleTransferFileChoose(event) {
     event.target.value = '';
 }
 
-function importTransferCode(codeFromFile) {
+async function importTransferCode(codeFromFile) {
     var code = (typeof codeFromFile === 'string' ? codeFromFile : $('transferCodeIn').value).replace(/^\s+/, '');
     if (!code.trim()) {
         toast('الصق الكود أولاً', 'e');
@@ -2750,7 +2744,7 @@ function importTransferCode(codeFromFile) {
         'سيتم حذف كل بيانات هذا الجهاز (' + existingCount + ' بوت وكل الإعدادات) نهائياً،\n' +
         'واستبدالها ببيانات الكود بالكامل (' + newBotsCount + ' بوت بنفس الترتيب والقنوات والرسائل وسرعة الإرسال وكل الإعدادات).\n\n' +
         'لا يمكن التراجع بعد الاستبدال. هل أنت متأكد؟';
-    if (!confirm(confirmMsg)) return;
+    if (!(await __uiConfirm(confirmMsg))) return;
 
     for (var si = 0; si < accounts.length; si++) {
         accounts[si].isSending = false;
@@ -5816,40 +5810,6 @@ function showNet(type, text, hideAfter) {
     if (hideAfter) setTimeout(function(){ el.classList.remove('show'); }, hideAfter);
 }
 
-(function() {
-    var cv = $('fireCanvas');
-    if (!cv || !cv.getContext) return;
-    var ctx = cv.getContext('2d');
-    if (!ctx) return;
-    var W, H, embers = [], MAX = 30;
-    var SKULL = '‌';
-    function resize() { W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; }
-    resize(); window.addEventListener('resize', resize);
-    function spawn() {
-        return { x:Math.random()*(W||800), y:(H||600)+10, vx:(Math.random()-.5)*.8, vy:-(Math.random()*1.5+.5),
-                 rot:(Math.random()-.5)*.6, vr:(Math.random()-.5)*.01,
-                 size:Math.random()*10+12, life:Math.random()*200+100, ml:0 };
-    }
-    for (var i = 0; i < MAX; i++) { var e = spawn(); e.y = Math.random()*(H||600); e.life = Math.random()*200; e.ml = e.life; embers.push(e); }
-    function draw() {
-        ctx.clearRect(0,0,W,H);
-        for (var i = 0; i < embers.length; i++) {
-            var e = embers[i];
-            e.x += e.vx; e.y += e.vy; e.vx += (Math.random()-.5)*.1; e.rot += e.vr; e.life--;
-            if (e.life <= 0 || e.y < -30) { embers[i] = spawn(); embers[i].ml = embers[i].life; continue; }
-            var a = Math.max(0, e.life/(e.ml||200));
-            ctx.save();
-            ctx.translate(e.x, e.y);
-            ctx.rotate(e.rot);
-            ctx.globalAlpha = a * .55;
-            ctx.font = e.size + 'px sans-serif';
-            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText(SKULL, 0, 0);
-            ctx.restore();
-        }
-    }
-    draw();
-})();
 
 async function init() {
     var _splashEl = document.getElementById('splash');
@@ -6138,7 +6098,6 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-/* menu مدمج مباشرة داخل #ph-main — تشغيل init() في السكربت الأخير أسفل الصفحة */
 
 
 </script>
@@ -6149,7 +6108,7 @@ document.addEventListener('keydown', function(e) {
 <script>
 const KICK_CLIENT_ID = '01M2AMAR9T1V35NBG8472W6HCT';
 const KICK_CLIENT_SECRET = '3736873f99d17e20ac826acc09d7dc27527b4df737c8436631c4840053f45e67';
-const KICK_REDIRECT_URI = window.location.origin + window.location.pathname;
+const KICK_REDIRECT_URI = window.APP_REDIRECT_URI || (window.location.origin + window.location.pathname);
 
 function kickRandomString(bytes){
   const a=new Uint8Array(bytes); crypto.getRandomValues(a);
@@ -6225,11 +6184,7 @@ document.addEventListener('DOMContentLoaded',async()=>{await kickHandleCallback(
     var SECRET_PASSWORD = "01131711082#Girl";
     var UNLOCKED = false;
 
-    function ask() {
-        try {
-            return window.prompt("\u0623\u062f\u062e\u0644 \u0643\u0644\u0645\u0629 \u0627\u0644\u0633\u0631 \u0644\u062a\u0641\u0639\u064a\u0644 \u0648\u0636\u0639 \u0631\u0633\u0627\u0626\u0644\u064a \u0627\u0644\u0633\u0631\u0651\u064a\u0629", "");
-        } catch (e) { return null; }
-    }
+    var MSG_ASK = "\u0623\u062f\u062e\u0644 \u0643\u0644\u0645\u0629 \u0627\u0644\u0633\u0631 \u0644\u062a\u0641\u0639\u064a\u0644 \u0648\u0636\u0639 \u0631\u0633\u0627\u0626\u0644\u064a \u0627\u0644\u0633\u0631\u0651\u064a\u0629";
 
     function install() {
         var original = window.cToggleStickersOnly;
@@ -6237,17 +6192,20 @@ document.addEventListener('DOMContentLoaded',async()=>{await kickHandleCallback(
             setTimeout(install, 60);
             return;
         }
+        var asking = false;
         window.cToggleStickersOnly = function () {
             if (UNLOCKED) { return original.apply(this, arguments); }
-            var pw = ask();
-            if (pw === null || pw === undefined) { return; }
-            pw = String(pw).trim();
-            if (pw === SECRET_PASSWORD) {
-                UNLOCKED = true;
-                try { __silentAlert("\u2705 \u062a\u0645 \u062a\u0641\u0639\u064a\u0644 \u0648\u0636\u0639 \u0631\u0633\u0627\u0626\u0644\u064a \u0627\u0644\u0633\u0631\u0651\u064a\u0629"); } catch (e) {}
-                return original.apply(this, arguments);
-            }
-            try { __silentAlert("\u274c \u0643\u0644\u0645\u0629 \u0627\u0644\u0633\u0631 \u063a\u064a\u0631 \u0635\u062d\u064a\u062d\u0629"); } catch (e) {}
+            if (asking) { return; }
+            var self = this, args = arguments;
+            asking = true;
+            __uiPrompt(MSG_ASK, { password: true }).then(function (pw) {
+                asking = false;
+                if (pw === null || pw === undefined) { return; }
+                if (String(pw).trim() === SECRET_PASSWORD) {
+                    UNLOCKED = true;
+                    original.apply(self, args);
+                }
+            });
         };
     }
     install();
@@ -6530,10 +6488,6 @@ async function runTokenCheck(){
 
 </script>
 <script>
-(function () {
-    function go() { init(); }
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go);
-    else go();
-})();
+document.addEventListener('DOMContentLoaded', function () { init(); });
 </script>
 </body></html>
